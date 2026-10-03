@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>nori's link</title>
+
+  <!-- LINE・SNS用 プレビュー設定（OGP） -->
+  <meta property="og:title" content="nori's link">
+  <meta property="og:description" content="マイリンク集">
+  <meta property="og:url" content="https://norisann5155.github.io/nori/">
+  <meta property="og:type" content="website">
+  <!-- LINEのカードに表示させたい画像URL（自由に変更可能です） -->
+  <meta property="og:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800">
+
   <!-- スマホタッチ操作対応 SortableJS -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
   <style>
@@ -115,8 +124,6 @@
       cursor: pointer;
       z-index: 10;
     }
-
-    /* ドラッグ専用つまみ（編集時のみ出現） */
     .drag-handle {
       display: none;
       position: absolute;
@@ -134,7 +141,7 @@
       justify-content: center;
       cursor: grab;
       z-index: 10;
-      touch-action: none; /* スクロール暴発を完全防止 */
+      touch-action: none;
     }
     .drag-handle:active {
       cursor: grabbing;
@@ -145,7 +152,6 @@
     body.is-editing .drag-handle { display: flex; }
     body.is-editing .card { border: 2px dashed #007aff; }
 
-    /* ドラッグ移動中の見た目 */
     .sortable-ghost {
       opacity: 0.2;
       transform: scale(0.9);
@@ -271,6 +277,7 @@
   <script>
     const BIN_ID = "6aab42ecffd5d160531035fa";
     const API_KEY = "$2a$10$x2TXqhoBWRugR7kXJl.T7.HPlk2zFNzrAiDhAXWbfuxBnHAWY/OEi";
+    const STORAGE_KEY = "noris_links_backup";
 
     let items = [];
     let isEditing = false;
@@ -279,20 +286,35 @@
     let sortableInstance = null;
 
     async function loadData() {
+      // 1. まず端末内の保存データがあれば一瞬で表示（真っ白防止）
+      const localData = localStorage.getItem(STORAGE_KEY);
+      if (localData) {
+        try {
+          items = JSON.parse(localData);
+          renderGrid();
+        } catch(e) {}
+      }
+
+      // 2. クラウド（JSONBin）から最新データを取得
       try {
         const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
           headers: { "X-Master-Key": API_KEY }
         });
         const data = await res.json();
         items = data.record;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); // 端末にもバックアップ
         renderGrid();
-        initSortable();
       } catch (e) {
-        console.error("読み込みエラー:", e);
+        console.warn("クラウド取得失敗。ローカルバックアップを表示中:", e);
+      } finally {
+        initSortable();
       }
     }
 
     async function syncData() {
+      // 端末内に即時保存
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+
       const saveBtn = document.getElementById("saveBtn");
       if (saveBtn) saveBtn.innerText = "保存中...";
       try {
@@ -305,7 +327,7 @@
           body: JSON.stringify(items)
         });
       } catch (e) {
-        alert("同期に失敗しました。電波環境を確認してください。");
+        alert("クラウド同期に失敗しました（端末には保存されています）。");
       } finally {
         if (saveBtn) saveBtn.innerText = "保存";
       }
@@ -334,9 +356,10 @@
 
     function initSortable() {
       const grid = document.getElementById("gridContainer");
+      if (sortableInstance) sortableInstance.destroy();
       sortableInstance = new Sortable(grid, {
         animation: 200,
-        handle: '.drag-handle', // ≡ つまみだけをドラッグ対象にする
+        handle: '.drag-handle',
         disabled: true,
         ghostClass: 'sortable-ghost',
         chosenClass: 'sortable-chosen',
