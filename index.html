@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>nori's link</title>
 
-  <!-- LINE・SNS用 プレビュー設定（OGP） -->
+  <!-- LINE・SNS用 プレビュー設定（サーティワン ピカチュウ画像） -->
   <meta property="og:title" content="nori's link">
   <meta property="og:description" content="マイリンク集">
   <meta property="og:url" content="https://norisann5155.github.io/nori/">
   <meta property="og:type" content="website">
-  <!-- LINEのカードに表示させたい画像URL（自由に変更可能です） -->
-  <meta property="og:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800">
+  <meta property="og:image" content="https://images.weserv.nl/?url=https://pbs.twimg.com/media/F3bQk0Wa8AA01rS?format=jpg&w=600">
 
   <!-- スマホタッチ操作対応 SortableJS -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
@@ -286,7 +285,6 @@
     let sortableInstance = null;
 
     async function loadData() {
-      // 1. まず端末内の保存データがあれば一瞬で表示（真っ白防止）
       const localData = localStorage.getItem(STORAGE_KEY);
       if (localData) {
         try {
@@ -295,14 +293,13 @@
         } catch(e) {}
       }
 
-      // 2. クラウド（JSONBin）から最新データを取得
       try {
         const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
           headers: { "X-Master-Key": API_KEY }
         });
         const data = await res.json();
         items = data.record;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); // 端末にもバックアップ
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
         renderGrid();
       } catch (e) {
         console.warn("クラウド取得失敗。ローカルバックアップを表示中:", e);
@@ -312,7 +309,6 @@
     }
 
     async function syncData() {
-      // 端末内に即時保存
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 
       const saveBtn = document.getElementById("saveBtn");
