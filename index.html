@@ -5,15 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>nori's link</title>
 
-  <!-- LINE・SNS用 プレビュー設定（確実に表示される超軽量・大画面カード版） -->
+  <!-- LINE・SNS用 プレビュー設定（縦1.5倍の大判サイズ） -->
   <meta property="og:title" content="nori's link">
   <meta property="og:description" content="マイリンク集">
   <meta property="og:url" content="https://norisann5155.github.io/nori/">
   <meta property="og:type" content="website">
-  <!-- LINE推奨の横長大画面サイズ（1200x630）＆高速最適化配信 -->
-  <meta property="og:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&h=630&fit=crop&auto=format&q=80">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&h=950&fit=crop&auto=format&q=80">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+  <meta property="og:image:height" content="950">
 
   <!-- スマホタッチ操作対応 SortableJS -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
@@ -57,7 +56,8 @@
     .card-wrap {
       position: relative;
       width: 100%;
-      aspect-ratio: 1 / 1.15;
+      /* 縦幅を1.5倍に拡大（縦長カード仕様） */
+      aspect-ratio: 1 / 1.7;
     }
     .card {
       width: 100%;
@@ -428,16 +428,13 @@
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement("canvas");
-          const size = 200;
-          canvas.width = size;
-          canvas.height = size;
+          const w = 200;
+          const h = 340; // 縦長比率に合わせて保存
+          canvas.width = w;
+          canvas.height = h;
           const ctx = canvas.getContext("2d");
 
-          const minSide = Math.min(img.width, img.height);
-          const sx = (img.width - minSide) / 2;
-          const sy = (img.height - minSide) / 2;
-
-          ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+          ctx.drawImage(img, 0, 0, w, h);
           currentImageData = canvas.toDataURL("image/jpeg", 0.7);
           document.getElementById("imagePreview").src = currentImageData;
         };
