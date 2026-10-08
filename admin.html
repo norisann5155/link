@@ -42,10 +42,28 @@
       max-width: 320px;
       outline: none;
     }
-    .help-text {
+    .token-bar {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+    .token-input {
       font-size: 11px;
-      color: var(--text-sub);
-      margin-top: 6px;
+      padding: 6px 10px;
+      width: 220px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      outline: none;
+    }
+    .token-btn {
+      font-size: 11px;
+      padding: 6px 12px;
+      background: #4b5563;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
 
     /* ボード・段レイアウト */
@@ -54,7 +72,7 @@
       flex-direction: column;
       gap: 12px;
       max-width: 440px;
-      margin: 0 auto;
+      margin: 12px auto 0;
     }
     .row-block {
       background: #fafbfc;
@@ -191,7 +209,6 @@
       color: #374151;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
-    .add-btn:hover { background: #f3f4f6; }
 
     /* 下部固定アクションバー */
     .bottom-bar {
@@ -223,7 +240,6 @@
     }
     .save-btn:disabled {
       background: #9ca3af;
-      box-shadow: none;
       cursor: not-allowed;
     }
 
@@ -279,7 +295,10 @@
 
   <header>
     <input type="text" id="pageTitle" class="page-title-input" value="マイリンク">
-    <div class="help-text">タップで選択／長押しで編集・削除</div>
+    <div class="token-bar">
+      <input type="password" id="ghTokenInput" class="token-input" placeholder="GitHub Token (ghp_...)">
+      <button class="token-btn" onclick="saveTokenManual()">トークン更新</button>
+    </div>
   </header>
 
   <div class="board" id="boardRows"></div>
@@ -313,491 +332,3 @@
         <label>タイトル（1行目）</label>
         <input type="text" id="editTitle" placeholder="サイト名">
       </div>
-      <div class="form-group">
-        <label>メモ / 補足（2行目・空欄可）</label>
-        <input type="text" id="editMemo" placeholder="毎月1日更新 など">
-      </div>
-      <div class="form-group">
-        <label>リンク先 URL</label>
-        <input type="url" id="editUrl" placeholder="https://...">
-      </div>
-      <div class="modal-actions">
-        <button class="modal-btn btn-trash" onclick="trashCurrentCard()">削除</button>
-        <div>
-          <button class="modal-btn btn-close" onclick="closeModal()">キャンセル</button>
-          <button class="modal-btn btn-apply" onclick="applyCardEdit()">適用</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const REPO_OWNER   = "norisann5155";
-    const REPO_NAME    = "link";
-    const HUB_FILE     = "hub.html";
-    const STATE_FILE   = "data.json";
-
-    function getGithubToken() {
-      let token = localStorage.getItem("ZANGI_GH_TOKEN");
-      if (!token) {
-        token = prompt("初回設定：GitHub Personal Access Token（ghp_...）を入力してください:");
-        if (token) {
-          token = token.trim();
-          localStorage.setItem("ZANGI_GH_TOKEN", token);
-        }
-      }
-      return token;
-    }
-
-    let state = {
-      title: "マイリンク",
-      rows: [
-        { cols: 3, slots: [
-          { icon: "🐸", title: "リンク1", memo: "", url: "https://google.com" },
-          { icon: "🐢", title: "リンク2", memo: "", url: "https://yahoo.co.jp" },
-          { icon: "🐊", title: "リンク3", memo: "", url: "#" }
-        ]},
-        { cols: 3, slots: [
-          { icon: "🐙", title: "リンク4", memo: "", url: "#" },
-          { icon: "🦀", title: "リンク5", memo: "", url: "#" },
-          { icon: "🦐", title: "リンク6", memo: "", url: "#" }
-        ]},
-        { cols: 3, slots: [
-          { icon: "🐳", title: "リンク7", memo: "", url: "#" },
-          { icon: "🐬", title: "リンク8", memo: "", url: "#" },
-          { icon: "🐟", title: "リンク9", memo: "", url: "#" }
-        ]},
-        { cols: 4, slots: [
-          { icon: "🦊", title: "リンク10", memo: "", url: "#" },
-          { icon: "🐶", title: "リンク11", memo: "", url: "#" },
-          { icon: "🐱", title: "リンク12", memo: "", url: "#" },
-          null
-        ]},
-        { cols: 4, slots: [null, null, null, null] }
-      ],
-      park: []
-    };
-
-    let selectedCard = null;
-    let editingCardRef = null;
-
-    window.addEventListener('DOMContentLoaded', async () => {
-      await loadRemoteState();
-      renderBoard();
-    });
-
-    async function loadRemoteState() {
-      try {
-        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${STATE_FILE}`);
-        if (res.ok) {
-          const json = await res.json();
-          const decoded = decodeURIComponent(escape(atob(json.content)));
-          state = JSON.parse(decoded);
-          document.getElementById('pageTitle').value = state.title || "マイリンク";
-        }
-      } catch (e) {
-        console.log("初期設定を使用");
-      }
-    }
-
-    function renderBoard() {
-      const board = document.getElementById('boardRows');
-      board.innerHTML = "";
-
-      state.rows.forEach((row, rIdx) => {
-        const rowEl = document.createElement('div');
-        rowEl.className = "row-block";
-        rowEl.innerHTML = `
-          <div class="row-header">
-            <span>${row.cols}列の段</span>
-            <button class="del-row-btn" onclick="deleteRow(${rIdx})">✕ 段を削除</button>
-          </div>
-          <div class="grid cols-${row.cols}" id="grid-row-${rIdx}"></div>
-        `;
-        board.appendChild(rowEl);
-
-        const gridEl = rowEl.querySelector(`#grid-row-${rIdx}`);
-        row.slots.forEach((card, sIdx) => {
-          gridEl.appendChild(createSlotEl(card, { from: 'row', rIdx, sIdx }));
-        });
-      });
-
-      const parkGrid = document.getElementById('parkGrid');
-      parkGrid.innerHTML = "";
-      state.park.forEach((card, pIdx) => {
-        parkGrid.appendChild(createSlotEl(card, { from: 'park', pIdx }));
-      });
-      const extraSlots = 4 - (state.park.length % 4);
-      for(let i=0; i<extraSlots; i++) {
-        parkGrid.appendChild(createSlotEl(null, { from: 'park', pIdx: state.park.length + i }));
-      }
-    }
-
-    function createSlotEl(card, loc) {
-      const slot = document.createElement('div');
-      slot.className = "slot";
-
-      if (card) {
-        const cardEl = document.createElement('div');
-        cardEl.className = "card";
-        if (selectedCard && isSameLoc(selectedCard, loc)) cardEl.classList.add('selected');
-
-        cardEl.innerHTML = `
-          <div class="card-icon">${card.icon || '🔗'}</div>
-          <div class="card-title">${escapeHtml(card.title || '無題')}</div>
-          ${card.memo ? `<div class="card-memo">${escapeHtml(card.memo)}</div>` : ''}
-        `;
-
-        let pressTimer;
-        cardEl.addEventListener('touchstart', (e) => {
-          pressTimer = setTimeout(() => {
-            openEditModal(card, loc);
-          }, 320);
-        }, { passive: true });
-        cardEl.addEventListener('touchend', () => clearTimeout(pressTimer));
-        cardEl.addEventListener('touchmove', () => clearTimeout(pressTimer));
-
-        cardEl.addEventListener('click', (e) => {
-          e.stopPropagation();
-          handleCardTap(card, loc);
-        });
-
-        cardEl.addEventListener('dblclick', () => openEditModal(card, loc));
-        slot.appendChild(cardEl);
-      }
-
-      slot.addEventListener('click', () => handleSlotTap(loc));
-      return slot;
-    }
-
-    function isSameLoc(a, b) {
-      if (a.from !== b.from) return false;
-      if (a.from === 'row') return a.rIdx === b.rIdx && a.sIdx === b.sIdx;
-      return a.pIdx === b.pIdx;
-    }
-
-    function handleCardTap(card, loc) {
-      if (!selectedCard) {
-        selectedCard = loc;
-        renderBoard();
-      } else if (isSameLoc(selectedCard, loc)) {
-        selectedCard = null;
-        renderBoard();
-      } else {
-        swapItems(selectedCard, loc);
-        selectedCard = null;
-        renderBoard();
-      }
-    }
-
-    function handleSlotTap(loc) {
-      if (selectedCard) {
-        swapItems(selectedCard, loc);
-        selectedCard = null;
-        renderBoard();
-      }
-    }
-
-    function getItem(loc) {
-      if (loc.from === 'row') return state.rows[loc.rIdx].slots[loc.sIdx];
-      return state.park[loc.pIdx] || null;
-    }
-
-    function setItem(loc, val) {
-      if (loc.from === 'row') {
-        state.rows[loc.rIdx].slots[loc.sIdx] = val;
-      } else {
-        if (loc.pIdx < state.park.length) {
-          if (val) state.park[loc.pIdx] = val;
-          else state.park.splice(loc.pIdx, 1);
-        } else if (val) {
-          state.park.push(val);
-        }
-      }
-    }
-
-    function swapItems(locA, locB) {
-      const itemA = getItem(locA);
-      const itemB = getItem(locB);
-      setItem(locA, itemB);
-      setItem(locB, itemA);
-    }
-
-    function addRow(cols) {
-      const slots = Array(cols).fill(null);
-      if (cols === 3) {
-        const last3Idx = state.rows.map(r => r.cols).lastIndexOf(3);
-        state.rows.splice(last3Idx + 1, 0, { cols, slots });
-      } else {
-        state.rows.push({ cols, slots });
-      }
-      renderBoard();
-    }
-
-    function deleteRow(rIdx) {
-      const row = state.rows[rIdx];
-      row.slots.forEach(slot => {
-        if (slot) state.park.push(slot);
-      });
-      state.rows.splice(rIdx, 1);
-      renderBoard();
-    }
-
-    function openEditModal(card, loc) {
-      editingCardRef = { card, loc };
-      document.getElementById('editIcon').value = card.icon || "";
-      document.getElementById('editTitle').value = card.title || "";
-      document.getElementById('editMemo').value = card.memo || "";
-      document.getElementById('editUrl').value = card.url || "";
-      document.getElementById('editModal').style.display = "flex";
-    }
-
-    function closeModal() {
-      document.getElementById('editModal').style.display = "none";
-      editingCardRef = null;
-    }
-
-    function applyCardEdit() {
-      if (!editingCardRef) return;
-      const updated = {
-        icon: document.getElementById('editIcon').value.trim() || "🔗",
-        title: document.getElementById('editTitle').value.trim() || "リンク",
-        memo: document.getElementById('editMemo').value.trim(),
-        url: document.getElementById('editUrl').value.trim() || "#"
-      };
-      setItem(editingCardRef.loc, updated);
-      closeModal();
-      renderBoard();
-    }
-
-    function trashCurrentCard() {
-      if (!editingCardRef) return;
-      setItem(editingCardRef.loc, null);
-      closeModal();
-      renderBoard();
-    }
-
-    async function saveAndPublish() {
-      const token = getGithubToken();
-      if (!token) {
-        alert("トークンが設定されていないため保存できません。");
-        return;
-      }
-
-      const btn = document.getElementById('saveBtn');
-      btn.disabled = true;
-      btn.innerText = "GitHubへ反映中...";
-
-      state.title = document.getElementById('pageTitle').value.trim() || "マイリンク";
-
-      try {
-        await pushGitHubFile(STATE_FILE, JSON.stringify(state, null, 2), "Update layout state", token);
-        const staticHtml = buildStaticHubHtml(state);
-        await pushGitHubFile(HUB_FILE, staticHtml, "Publish hub.html via Zangi-Board", token);
-
-        alert("✅ 反映完了！約15〜30秒後に hub.html が更新されます。");
-      } catch (err) {
-        if (err.message.includes("Bad credentials")) {
-          localStorage.removeItem("ZANGI_GH_TOKEN");
-          alert("❌ トークンが無効です。次回保存時に入力し直してください。");
-        } else {
-          alert("❌ 反映に失敗しました: " + err.message);
-        }
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "保存・公開へ反映";
-      }
-    }
-
-    async function pushGitHubFile(path, content, message, token) {
-      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
-      const headers = {
-        "Authorization": "token " + token,
-        "Accept": "application/vnd.github.v3+json",
-        "Content-Type": "application/json"
-      };
-
-      let sha = "";
-      try {
-        const getRes = await fetch(url, { headers });
-        if (getRes.ok) {
-          const fileData = await getRes.json();
-          sha = fileData.sha;
-        }
-      } catch(e) {}
-
-      const utf8Bytes = new TextEncoder().encode(content);
-      let binary = "";
-      for (let i = 0; i < utf8Bytes.length; i++) {
-        binary += String.fromCharCode(utf8Bytes[i]);
-      }
-      const base64 = btoa(binary);
-
-      const payload = { message, content: base64 };
-      if (sha) payload.sha = sha;
-
-      const putRes = await fetch(url, {
-        method: "PUT",
-        headers,
-        body: JSON.stringify(payload)
-      });
-
-      if (!putRes.ok) {
-        const err = await putRes.json();
-        throw new Error(err.message || putRes.statusText);
-      }
-    }
-
-    function buildStaticHubHtml(data) {
-      let rowsHtml = "";
-      data.rows.forEach(row => {
-        let cardsHtml = "";
-        row.slots.forEach(slot => {
-          if (!slot) {
-            cardsHtml += `<div class="card-empty"></div>`;
-          } else {
-            cardsHtml += `
-              <a href="${escapeHtml(slot.url || '#')}" class="card">
-                <span class="card-icon">${slot.icon || '🔗'}</span>
-                <span class="card-title">${escapeHtml(slot.title || 'リンク')}</span>
-                ${slot.memo ? `<span class="card-memo">${escapeHtml(slot.memo)}</span>` : ''}
-              </a>`;
-          }
-        });
-        rowsHtml += `<div class="grid cols-${row.cols}">${cardsHtml}</div>`;
-      });
-
-      return `<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="robots" content="noindex, nofollow">
-  <title>${escapeHtml(data.title)}</title>
-
-  <meta property="og:title" content="${escapeHtml(data.title)}">
-  <meta property="og:description" content="マイリンク集">
-  <meta property="og:url" content="https://${REPO_OWNER}.github.io/${REPO_NAME}/hub.html">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="https://${REPO_OWNER}.github.io/${REPO_NAME}/pika.jpg">
-
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body {
-      background: #f4f5f7;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 24px 12px 60px;
-    }
-    .container {
-      width: 100%;
-      max-width: 440px;
-      text-align: center;
-    }
-    .page-title {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      color: #5c626d;
-      margin-bottom: 18px;
-    }
-    .board-flow {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: 100%;
-    }
-    .grid {
-      display: grid;
-      gap: 8px;
-      width: 100%;
-    }
-    .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
-    .grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
-
-    .card {
-      position: relative;
-      height: 96px;
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 6px 4px;
-      touch-action: manipulation;
-    }
-    .cols-4 .card {
-      height: 84px;
-      border-radius: 12px;
-    }
-    .card:active {
-      transform: scale(0.96);
-      opacity: 0.85;
-    }
-    .card-icon {
-      font-size: 24px;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-    .cols-4 .card-icon {
-      font-size: 20px;
-      margin-bottom: 3px;
-    }
-    .card-title {
-      font-size: 11px;
-      font-weight: 600;
-      color: #272a30;
-      line-height: 1.2;
-      text-align: center;
-      width: 100%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .cols-4 .card-title {
-      font-size: 10px;
-    }
-    .card-memo {
-      font-size: 9px;
-      color: #8c93a0;
-      margin-top: 2px;
-      line-height: 1.1;
-      text-align: center;
-      width: 100%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .card-empty {
-      visibility: hidden;
-      height: 96px;
-    }
-    .cols-4 .card-empty {
-      height: 84px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="page-title">${escapeHtml(data.title)}</div>
-    <div class="board-flow">
-      ${rowsHtml}
-    </div>
-  </div>
-</body>
-</html>`;
-    }
-
-    function escapeHtml(str) {
-      if (!str) return "";
-      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-    }
-  </script>
-</body>
-</html>
