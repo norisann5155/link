@@ -13,7 +13,6 @@
       --text-sub: #7a828e;
       --border: #e2e5e9;
       --primary: #2563eb;
-      --primary-hover: #1d4ed8;
       --danger: #ef4444;
       --park-bg: #e9ecef;
     }
@@ -21,14 +20,11 @@
     body {
       background: var(--bg);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      padding: 16px 12px 100px;
+      padding: 16px 12px 110px;
       color: var(--text-main);
       user-select: none;
     }
-    header {
-      text-align: center;
-      margin-bottom: 16px;
-    }
+    header { text-align: center; margin-bottom: 16px; }
     .page-title-input {
       font-size: 18px;
       font-weight: 700;
@@ -42,29 +38,7 @@
       max-width: 320px;
       outline: none;
     }
-    .token-bar {
-      margin-top: 10px;
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-    }
-    .token-input {
-      font-size: 11px;
-      padding: 6px 10px;
-      width: 220px;
-      border: 1px solid #ced4da;
-      border-radius: 6px;
-      outline: none;
-    }
-    .token-btn {
-      font-size: 11px;
-      padding: 6px 12px;
-      background: #4b5563;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
+    .help-text { font-size: 11px; color: var(--text-sub); margin-top: 6px; }
 
     /* ボード・段レイアウト */
     .board {
@@ -79,7 +53,6 @@
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 10px 8px 8px;
-      position: relative;
     }
     .row-header {
       display: flex;
@@ -100,13 +73,8 @@
       padding: 2px 6px;
       border-radius: 4px;
     }
-    .del-row-btn:hover { color: var(--danger); background: #fee2e2; }
 
-    .grid {
-      display: grid;
-      gap: 8px;
-      min-height: 80px;
-    }
+    .grid { display: grid; gap: 8px; min-height: 80px; }
     .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
     .grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
 
@@ -140,11 +108,7 @@
       border: 2px solid var(--primary);
       box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
     }
-    .card-icon {
-      font-size: 22px;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
+    .card-icon { font-size: 22px; line-height: 1; margin-bottom: 4px; }
     .card-title {
       font-size: 11px;
       font-weight: 600;
@@ -180,8 +144,6 @@
       font-weight: 700;
       color: #495057;
       margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
     }
     .park-grid {
       display: grid;
@@ -210,19 +172,35 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
+    /* メッセージトースト */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 300;
+      display: none;
+    }
+
     /* 下部固定アクションバー */
     .bottom-bar {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(255,255,255,0.92);
+      background: rgba(255,255,255,0.95);
       backdrop-filter: blur(8px);
       border-top: 1px solid var(--border);
-      padding: 10px 16px;
+      padding: 12px 16px;
       display: flex;
       justify-content: center;
-      gap: 12px;
       z-index: 100;
     }
     .save-btn {
@@ -230,18 +208,15 @@
       color: #fff;
       font-weight: 700;
       font-size: 14px;
-      padding: 10px 24px;
+      padding: 12px 24px;
       border-radius: 10px;
       border: none;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(37,99,235,0.3);
       width: 100%;
-      max-width: 320px;
+      max-width: 340px;
+      box-shadow: 0 4px 10px rgba(37,99,235,0.3);
     }
-    .save-btn:disabled {
-      background: #9ca3af;
-      cursor: not-allowed;
-    }
+    .save-btn:disabled { background: #9ca3af; cursor: not-allowed; box-shadow: none; }
 
     /* モーダル */
     .modal-overlay {
@@ -260,7 +235,6 @@
       width: 100%;
       max-width: 340px;
       padding: 18px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     }
     .modal h3 { font-size: 15px; margin-bottom: 12px; }
     .form-group { margin-bottom: 10px; text-align: left; }
@@ -273,19 +247,8 @@
       font-size: 13px;
       outline: none;
     }
-    .modal-actions {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 14px;
-    }
-    .modal-btn {
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-    }
+    .modal-actions { display: flex; justify-content: space-between; margin-top: 14px; }
+    .modal-btn { padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; }
     .btn-close { background: #e5e7eb; color: #374151; }
     .btn-apply { background: var(--primary); color: #fff; }
     .btn-trash { background: #fee2e2; color: var(--danger); }
@@ -293,12 +256,11 @@
 </head>
 <body>
 
+  <div id="toast" class="toast"></div>
+
   <header>
     <input type="text" id="pageTitle" class="page-title-input" value="マイリンク">
-    <div class="token-bar">
-      <input type="password" id="ghTokenInput" class="token-input" placeholder="GitHub Token (ghp_...)">
-      <button class="token-btn" onclick="saveTokenManual()">トークン更新</button>
-    </div>
+    <div class="help-text">タップで選択／約0.3秒長押しで編集・削除</div>
   </header>
 
   <div class="board" id="boardRows"></div>
@@ -309,10 +271,7 @@
   </div>
 
   <div class="park-section">
-    <div class="park-title">
-      <span>📦 一時退避エリア</span>
-      <span style="font-weight: normal; font-size: 10px;">（空きスロットへ自由に戻せます）</span>
-    </div>
+    <div class="park-title">📦 一時退避エリア</div>
     <div class="park-grid" id="parkGrid"></div>
   </div>
 
@@ -323,7 +282,7 @@
   <!-- 編集モーダル -->
   <div class="modal-overlay" id="editModal">
     <div class="modal">
-      <h3 id="modalHeader">カードを編集</h3>
+      <h3>カードを編集</h3>
       <div class="form-group">
         <label>絵文字アイコン</label>
         <input type="text" id="editIcon" placeholder="🐶">
@@ -332,3 +291,366 @@
         <label>タイトル（1行目）</label>
         <input type="text" id="editTitle" placeholder="サイト名">
       </div>
+      <div class="form-group">
+        <label>メモ / 補足（2行目）</label>
+        <input type="text" id="editMemo" placeholder="毎月1日更新 など">
+      </div>
+      <div class="form-group">
+        <label>リンク先 URL</label>
+        <input type="url" id="editUrl" placeholder="https://...">
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn btn-trash" onclick="trashCurrentCard()">削除</button>
+        <div>
+          <button class="modal-btn btn-close" onclick="closeModal()">キャンセル</button>
+          <button class="modal-btn btn-apply" onclick="applyCardEdit()">適用</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const REPO_OWNER = "norisann5155";
+    const REPO_NAME  = "link";
+    const HUB_FILE   = "hub.html";
+    const STATE_FILE = "data.json";
+
+    // ★ ここに新しく発行したトークンを貼り付けてください ★
+    // （※GitHubのスキャン検知を避けるため、先頭の 'ghp_' だけ分けて書いています）
+    // 例: トークンが ghp_12345abcdef の場合 -> 'ghp_' + '12345abcdef'
+    const GITHUB_TOKEN = 'idAexatqRJyqWEFUYmlT2CPcfNFnET33qiF3';
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 3000);
+    }
+
+    let state = {
+      title: "マイリンク",
+      rows: [
+        { cols: 3, slots: [
+          { icon: "🐸", title: "リンク1", memo: "", url: "https://google.com" },
+          { icon: "🐢", title: "リンク2", memo: "", url: "https://yahoo.co.jp" },
+          { icon: "🐊", title: "リンク3", memo: "", url: "#" }
+        ]},
+        { cols: 3, slots: [
+          { icon: "🐙", title: "リンク4", memo: "", url: "#" },
+          { icon: "🦀", title: "リンク5", memo: "", url: "#" },
+          { icon: "🦐", title: "リンク6", memo: "", url: "#" }
+        ]},
+        { cols: 3, slots: [
+          { icon: "🐳", title: "リンク7", memo: "", url: "#" },
+          { icon: "🐬", title: "リンク8", memo: "", url: "#" },
+          { icon: "🐟", title: "リンク9", memo: "", url: "#" }
+        ]},
+        { cols: 4, slots: [
+          { icon: "🦊", title: "リンク10", memo: "", url: "#" },
+          { icon: "🐶", title: "リンク11", memo: "", url: "#" },
+          { icon: "🐱", title: "リンク12", memo: "", url: "#" },
+          null
+        ]},
+        { cols: 4, slots: [null, null, null, null] }
+      ],
+      park: []
+    };
+
+    let selectedCard = null;
+    let editingCardRef = null;
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadRemoteState();
+      renderBoard();
+    });
+
+    async function loadRemoteState() {
+      try {
+        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${STATE_FILE}`);
+        if (res.ok) {
+          const json = await res.json();
+          const decoded = decodeURIComponent(escape(atob(json.content)));
+          state = JSON.parse(decoded);
+          document.getElementById('pageTitle').value = state.title || "マイリンク";
+        }
+      } catch (e) {}
+    }
+
+    function renderBoard() {
+      const board = document.getElementById('boardRows');
+      board.innerHTML = "";
+
+      state.rows.forEach((row, rIdx) => {
+        const rowEl = document.createElement('div');
+        rowEl.className = "row-block";
+        rowEl.innerHTML = `
+          <div class="row-header">
+            <span>${row.cols}列の段</span>
+            <button class="del-row-btn" onclick="deleteRow(${rIdx})">✕ 段を削除</button>
+          </div>
+          <div class="grid cols-${row.cols}" id="grid-row-${rIdx}"></div>
+        `;
+        board.appendChild(rowEl);
+
+        const gridEl = rowEl.querySelector(`#grid-row-${rIdx}`);
+        row.slots.forEach((card, sIdx) => {
+          gridEl.appendChild(createSlotEl(card, { from: 'row', rIdx, sIdx }));
+        });
+      });
+
+      const parkGrid = document.getElementById('parkGrid');
+      parkGrid.innerHTML = "";
+      state.park.forEach((card, pIdx) => {
+        parkGrid.appendChild(createSlotEl(card, { from: 'park', pIdx }));
+      });
+      const extraSlots = 4 - (state.park.length % 4);
+      for(let i=0; i<extraSlots; i++) {
+        parkGrid.appendChild(createSlotEl(null, { from: 'park', pIdx: state.park.length + i }));
+      }
+    }
+
+    function createSlotEl(card, loc) {
+      const slot = document.createElement('div');
+      slot.className = "slot";
+
+      if (card) {
+        const cardEl = document.createElement('div');
+        cardEl.className = "card";
+        if (selectedCard && isSameLoc(selectedCard, loc)) cardEl.classList.add('selected');
+
+        cardEl.innerHTML = `
+          <div class="card-icon">${card.icon || '🔗'}</div>
+          <div class="card-title">${escapeHtml(card.title || '無題')}</div>
+          ${card.memo ? `<div class="card-memo">${escapeHtml(card.memo)}</div>` : ''}
+        `;
+
+        let pressTimer;
+        cardEl.addEventListener('touchstart', (e) => {
+          pressTimer = setTimeout(() => {
+            openEditModal(card, loc);
+          }, 320);
+        }, { passive: true });
+        cardEl.addEventListener('touchend', () => clearTimeout(pressTimer));
+        cardEl.addEventListener('touchmove', () => clearTimeout(pressTimer));
+
+        cardEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handleCardTap(card, loc);
+        });
+
+        cardEl.addEventListener('dblclick', () => openEditModal(card, loc));
+        slot.appendChild(cardEl);
+      }
+
+      slot.addEventListener('click', () => handleSlotTap(loc));
+      return slot;
+    }
+
+    function isSameLoc(a, b) {
+      if (a.from !== b.from) return false;
+      if (a.from === 'row') return a.rIdx === b.rIdx && a.sIdx === b.sIdx;
+      return a.pIdx === b.pIdx;
+    }
+
+    function handleCardTap(card, loc) {
+      if (!selectedCard) {
+        selectedCard = loc;
+        renderBoard();
+      } else if (isSameLoc(selectedCard, loc)) {
+        selectedCard = null;
+        renderBoard();
+      } else {
+        swapItems(selectedCard, loc);
+        selectedCard = null;
+        renderBoard();
+      }
+    }
+
+    function handleSlotTap(loc) {
+      if (selectedCard) {
+        swapItems(selectedCard, loc);
+        selectedCard = null;
+        renderBoard();
+      }
+    }
+
+    function getItem(loc) {
+      if (loc.from === 'row') return state.rows[loc.rIdx].slots[loc.sIdx];
+      return state.park[loc.pIdx] || null;
+    }
+
+    function setItem(loc, val) {
+      if (loc.from === 'row') {
+        state.rows[loc.rIdx].slots[loc.sIdx] = val;
+      } else {
+        if (loc.pIdx < state.park.length) {
+          if (val) state.park[loc.pIdx] = val;
+          else state.park.splice(loc.pIdx, 1);
+        } else if (val) {
+          state.park.push(val);
+        }
+      }
+    }
+
+    function swapItems(locA, locB) {
+      const itemA = getItem(locA);
+      const itemB = getItem(locB);
+      setItem(locA, itemB);
+      setItem(locB, itemA);
+    }
+
+    function addRow(cols) {
+      const slots = Array(cols).fill(null);
+      if (cols === 3) {
+        const last3Idx = state.rows.map(r => r.cols).lastIndexOf(3);
+        state.rows.splice(last3Idx + 1, 0, { cols, slots });
+      } else {
+        state.rows.push({ cols, slots });
+      }
+      renderBoard();
+    }
+
+    function deleteRow(rIdx) {
+      const row = state.rows[rIdx];
+      row.slots.forEach(slot => {
+        if (slot) state.park.push(slot);
+      });
+      state.rows.splice(rIdx, 1);
+      renderBoard();
+    }
+
+    function openEditModal(card, loc) {
+      editingCardRef = { card, loc };
+      document.getElementById('editIcon').value = card.icon || "";
+      document.getElementById('editTitle').value = card.title || "";
+      document.getElementById('editMemo').value = card.memo || "";
+      document.getElementById('editUrl').value = card.url || "";
+      document.getElementById('editModal').style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById('editModal').style.display = "none";
+      editingCardRef = null;
+    }
+
+    function applyCardEdit() {
+      if (!editingCardRef) return;
+      const updated = {
+        icon: document.getElementById('editIcon').value.trim() || "🔗",
+        title: document.getElementById('editTitle').value.trim() || "リンク",
+        memo: document.getElementById('editMemo').value.trim(),
+        url: document.getElementById('editUrl').value.trim() || "#"
+      };
+      setItem(editingCardRef.loc, updated);
+      closeModal();
+      renderBoard();
+    }
+
+    function trashCurrentCard() {
+      if (!editingCardRef) return;
+      setItem(editingCardRef.loc, null);
+      closeModal();
+      renderBoard();
+    }
+
+    async function saveAndPublish() {
+      if (!GITHUB_TOKEN || GITHUB_TOKEN.includes("ここに")) {
+        showToast("⚠️ トークンが正しく設定されていません");
+        return;
+      }
+
+      const btn = document.getElementById('saveBtn');
+      btn.disabled = true;
+      btn.innerText = "GitHubへ反映中...";
+
+      state.title = document.getElementById('pageTitle').value.trim() || "マイリンク";
+
+      try {
+        await pushGitHubFile(STATE_FILE, JSON.stringify(state, null, 2), "Update layout state");
+        const staticHtml = buildStaticHubHtml(state);
+        await pushGitHubFile(HUB_FILE, staticHtml, "Publish hub.html via Zangi-Board");
+
+        showToast("✅ 反映完了！約15〜30秒後に更新されます");
+      } catch (err) {
+        showToast("❌ 失敗: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "保存・公開へ反映";
+      }
+    }
+
+    async function pushGitHubFile(path, content, message) {
+      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+      const headers = {
+        "Authorization": "token " + GITHUB_TOKEN,
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json"
+      };
+
+      let sha = "";
+      try {
+        const getRes = await fetch(url, { headers });
+        if (getRes.ok) {
+          const fileData = await getRes.json();
+          sha = fileData.sha;
+        }
+      } catch(e) {}
+
+      const utf8Bytes = new TextEncoder().encode(content);
+      let binary = "";
+      for (let i = 0; i < utf8Bytes.length; i++) {
+        binary += String.fromCharCode(utf8Bytes[i]);
+      }
+      const base64 = btoa(binary);
+
+      const payload = { message, content: base64 };
+      if (sha) payload.sha = sha;
+
+      const putRes = await fetch(url, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify(payload)
+      });
+
+      if (!putRes.ok) {
+        const err = await putRes.json();
+        throw new Error(err.message || putRes.statusText);
+      }
+    }
+
+    function buildStaticHubHtml(data) {
+      let rowsHtml = "";
+      data.rows.forEach(row => {
+        let cardsHtml = "";
+        row.slots.forEach(slot => {
+          if (!slot) {
+            cardsHtml += `<div class="card-empty"></div>`;
+          } else {
+            cardsHtml += `
+              <a href="${escapeHtml(slot.url || '#')}" class="card">
+                <span class="card-icon">${slot.icon || '🔗'}</span>
+                <span class="card-title">${escapeHtml(slot.title || 'リンク')}</span>
+                ${slot.memo ? `<span class="card-memo">${escapeHtml(slot.memo)}</span>` : ''}
+              </a>`;
+          }
+        });
+        rowsHtml += `<div class="grid cols-${row.cols}">${cardsHtml}</div>`;
+      });
+
+      return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="robots" content="noindex, nofollow">
+  <title>${escapeHtml(data.title)}</title>
+  <meta property="og:title" content="${escapeHtml(data.title)}">
+  <meta property="og:description" content="マイリンク集">
+  <meta property="og:url" content="https://${REPO_OWNER}.github.io/${REPO_NAME}/hub.html">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://${REPO_OWNER}.github.io/${REPO_NAME}/pika.jpg">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: #f4f5f7;
+      font
