@@ -3,164 +3,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>マイリンク</title>
-
-  <meta property="og:title" content="マイリンク">
+  <meta name="robots" content="noindex, nofollow">
+  <title>nori's link</title>
+  <meta property="og:title" content="nori's link">
   <meta property="og:description" content="マイリンク集">
   <meta property="og:url" content="https://norisann5155.github.io/link/hub.html">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://norisann5155.github.io/link/pika.jpg">
-
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
-      background: #f4f5f7; /* まぶしさを抑えた落ち着いたニュートラルグレー */
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: linear-gradient(180deg, #e3f2fd 0%, #fff9e6 15%, #f7f9fa 35%, #f7f9fa 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
       justify-content: center;
       min-height: 100vh;
-      padding: 24px 14px 60px;
+      padding: 16px 12px 60px;
     }
-    .container {
-      width: 100%;
-      max-width: 420px;
-      text-align: center;
-    }
+    .container { width: 100%; max-width: 420px; text-align: center; }
     .page-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
-      letter-spacing: 0.08em;
-      color: #5c626d; /* 目に刺さらないソフトなダークグレー */
-      margin-bottom: 20px;
+      letter-spacing: 0.05em;
+      color: #666;
+      margin-bottom: 14px;
+      text-transform: lowercase;
     }
     .link-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      gap: 10px;
       width: 100%;
     }
+    .card-wrap { position: relative; width: 100%; aspect-ratio: 1 / 1.15; }
     .card {
-      position: relative;
       width: 100%;
-      height: 108px;
-      border-radius: 18px;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      height: 100%;
+      background-color: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
       text-decoration: none;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 8px 6px;
-      touch-action: manipulation;
-      transition: opacity 0.15s ease, transform 0.15s ease;
+      position: relative;
     }
-    .card:active {
-      transform: scale(0.96);
-      opacity: 0.85;
-    }
-    .card-icon {
-      font-size: 28px;
-      line-height: 1;
-      margin-bottom: 6px;
-      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.04));
-    }
-    .card-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: #272a30;
-      line-height: 1.3;
-      text-align: center;
-      word-break: break-all;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .card-badge {
-      margin-top: 5px;
-      font-size: 9px;
-      font-weight: 600;
-      padding: 2px 7px;
+    .card:active { transform: scale(0.97); }
+    .card img { width: 100%; height: 100%; object-fit: cover; background-color: #eee; }
+    .card-title-badge {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      right: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(2px);
+      padding: 4px 6px;
       border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #111;
       white-space: nowrap;
-      max-width: 90%;
       overflow: hidden;
       text-overflow: ellipsis;
-      letter-spacing: 0.02em;
+    }
+    .card-footer-badge {
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #333;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="page-title">マイリンク</div>
+    <div class="page-title">nori's link</div>
     <div class="link-grid">
       
-      <a href="http" class="card" style="background: #ffffff; border-color: #e8eaed;">
-        <span class="card-icon">🦗</span>
-        <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
-      </a>
-      <a href="http" class="card" style="background: #ffffff; border-color: #e8eaed;">
-        <span class="card-icon">🐢</span>
-        <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
-      </a>
-      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
-        <span class="card-icon">🐊</span>
-        <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
-      </a>
-      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
-        <span class="card-icon">🐙</span>
-        <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
-      </a>
-      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
-        <span class="card-icon">🦀</span>
-        <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
-      </a>
-      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
-        <span class="card-icon">🦐</span>
-        <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
-      </a>
-      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
-        <span class="card-icon">🐳</span>
-        <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
-      </a>
-      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
-        <span class="card-icon">🐬</span>
-        <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
-      </a>
-      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
-        <span class="card-icon">🐟</span>
-        <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
-      </a>
-      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
-        <span class="card-icon">🦊</span>
-        <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
-      </a>
-      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
-        <span class="card-icon">🐶</span>
-        <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
-      </a>
-      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
-        <span class="card-icon">🐱</span>
-        <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
-      </a>
     </div>
   </div>
 </body>
