@@ -19,12 +19,12 @@
       -webkit-tap-highlight-color: transparent;
     }
     body {
-      background: #f7f9fa;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f4f5f7; /* まぶしさを抑えた落ち着いたニュートラルグレー */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
       display: flex;
       justify-content: center;
       min-height: 100vh;
-      padding: 20px 12px 60px;
+      padding: 24px 14px 60px;
     }
     .container {
       width: 100%;
@@ -32,11 +32,11 @@
       text-align: center;
     }
     .page-title {
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: #333;
-      margin-bottom: 18px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: #5c626d; /* 目に刺さらないソフトなダークグレー */
+      margin-bottom: 20px;
     }
     .link-grid {
       display: grid;
@@ -47,32 +47,34 @@
     .card {
       position: relative;
       width: 100%;
-      height: 105px;
-      border-radius: 16px;
-      border: 1px solid transparent;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      height: 108px;
+      border-radius: 18px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
       text-decoration: none;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 6px 4px;
+      padding: 8px 6px;
       touch-action: manipulation;
+      transition: opacity 0.15s ease, transform 0.15s ease;
     }
     .card:active {
       transform: scale(0.96);
-      opacity: 0.9;
+      opacity: 0.85;
     }
     .card-icon {
-      font-size: 26px;
+      font-size: 28px;
       line-height: 1;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.04));
     }
     .card-title {
       font-size: 12px;
-      font-weight: 700;
-      color: #1a1a1a;
-      line-height: 1.25;
+      font-weight: 600;
+      color: #272a30;
+      line-height: 1.3;
       text-align: center;
       word-break: break-all;
       display: -webkit-box;
@@ -83,13 +85,14 @@
     .card-badge {
       margin-top: 5px;
       font-size: 9px;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 8px;
       white-space: nowrap;
       max-width: 90%;
       overflow: hidden;
       text-overflow: ellipsis;
+      letter-spacing: 0.02em;
     }
   </style>
 </head>
@@ -98,65 +101,65 @@
     <div class="page-title">マイリンク</div>
     <div class="link-grid">
       
-      <a href="http" class="card" style="background: #ffe8cc; border-color: #ffd8a8;">
+      <a href="http" class="card" style="background: #ffffff; border-color: #e8eaed;">
         <span class="card-icon">🦗</span>
         <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #007aff; color: #fff;">350</span>
+        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
       </a>
-      <a href="http" class="card" style="background: #d0ebff; border-color: #a5d8ff;">
+      <a href="http" class="card" style="background: #ffffff; border-color: #e8eaed;">
         <span class="card-icon">🐢</span>
         <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #007aff; color: #fff;">350</span>
+        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
       </a>
-      <a href="#" class="card" style="background: #d3f9d8; border-color: #b2f2bb;">
+      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
         <span class="card-icon">🐊</span>
         <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #2f9e44; color: #fff;">350</span>
+        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
       </a>
-      <a href="#" class="card" style="background: #fff3bf; border-color: #ffec99;">
+      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
         <span class="card-icon">🐙</span>
         <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #1864ab; color: #fff;">350</span>
+        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
       </a>
-      <a href="#" class="card" style="background: #d0ebff; border-color: #a5d8ff;">
+      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
         <span class="card-icon">🦀</span>
         <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #007aff; color: #fff;">350</span>
+        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
       </a>
-      <a href="#" class="card" style="background: #d3f9d8; border-color: #b2f2bb;">
+      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
         <span class="card-icon">🦐</span>
         <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #2f9e44; color: #fff;">350</span>
+        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
       </a>
-      <a href="#" class="card" style="background: #fff3bf; border-color: #ffec99;">
+      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
         <span class="card-icon">🐳</span>
         <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #1864ab; color: #fff;">350</span>
+        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
       </a>
-      <a href="#" class="card" style="background: #ffe8cc; border-color: #ffd8a8;">
+      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
         <span class="card-icon">🐬</span>
         <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #007aff; color: #fff;">350</span>
+        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
       </a>
-      <a href="#" class="card" style="background: #ffe8cc; border-color: #ffd8a8;">
+      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
         <span class="card-icon">🐟</span>
         <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #007aff; color: #fff;">350</span>
+        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
       </a>
-      <a href="#" class="card" style="background: #d0ebff; border-color: #a5d8ff;">
+      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
         <span class="card-icon">🦊</span>
         <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #007aff; color: #fff;">350</span>
+        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
       </a>
-      <a href="#" class="card" style="background: #d3f9d8; border-color: #b2f2bb;">
+      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
         <span class="card-icon">🐶</span>
         <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #2f9e44; color: #fff;">350</span>
+        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
       </a>
-      <a href="#" class="card" style="background: #fff3bf; border-color: #ffec99;">
+      <a href="#" class="card" style="background: #ffffff; border-color: #e8eaed;">
         <span class="card-icon">🐱</span>
         <span class="card-title">サントリー</span>
-        <span class="card-badge" style="background: #1864ab; color: #fff;">350</span>
+        <span class="card-badge" style="background: #e9ecef; color: #495057;">350</span>
       </a>
     </div>
   </div>
