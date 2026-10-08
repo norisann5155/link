@@ -103,10 +103,6 @@
       align-items: center;
       justify-content: center;
     }
-    .slot.dragover {
-      background: #e0f2fe;
-      border-color: var(--primary);
-    }
     .card {
       position: absolute;
       inset: 0;
@@ -119,15 +115,12 @@
       align-items: center;
       justify-content: center;
       padding: 6px 4px;
-      cursor: grab;
+      cursor: pointer;
       touch-action: none;
     }
     .card.selected {
       border: 2px solid var(--primary);
       box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
-    }
-    .card.dragging {
-      opacity: 0.4;
     }
     .card-icon {
       font-size: 22px;
@@ -234,7 +227,7 @@
       cursor: not-allowed;
     }
 
-    /* カード編集モーダル */
+    /* モーダル */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -286,7 +279,7 @@
 
   <header>
     <input type="text" id="pageTitle" class="page-title-input" value="マイリンク">
-    <div class="help-text">タップで選択／約0.3秒長押しでドラッグ移動・編集</div>
+    <div class="help-text">タップで選択／長押しで編集・削除</div>
   </header>
 
   <div class="board" id="boardRows"></div>
@@ -339,14 +332,23 @@
   </div>
 
   <script>
-    // GitHub API 自動更新設定
-    const GITHUB_TOKEN = "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";
     const REPO_OWNER   = "norisann5155";
     const REPO_NAME    = "link";
     const HUB_FILE     = "hub.html";
-    const STATE_FILE   = "data.json"; // 状態保持用
+    const STATE_FILE   = "data.json";
 
-    // 初期データ（ざんぎリンク仕様：3列×3段、4列×2段）
+    function getGithubToken() {
+      let token = localStorage.getItem("ZANGI_GH_TOKEN");
+      if (!token) {
+        token = prompt("初回設定：GitHub Personal Access Token（ghp_...）を入力してください:");
+        if (token) {
+          token = token.trim();
+          localStorage.setItem("ZANGI_GH_TOKEN", token);
+        }
+      }
+      return token;
+    }
+
     let state = {
       title: "マイリンク",
       rows: [
@@ -376,10 +378,9 @@
       park: []
     };
 
-    let selectedCard = null; // { from: 'row'|'park', rowIndex, slotIndex, parkIndex }
+    let selectedCard = null;
     let editingCardRef = null;
 
-    // 初期読込
     window.addEventListener('DOMContentLoaded', async () => {
       await loadRemoteState();
       renderBoard();
@@ -395,7 +396,7 @@
           document.getElementById('pageTitle').value = state.title || "マイリンク";
         }
       } catch (e) {
-        console.log("初回ロード: 初期設定を使用");
+        console.log("初期設定を使用");
       }
     }
 
@@ -421,13 +422,11 @@
         });
       });
 
-      // パーク（一時退避）の描画
       const parkGrid = document.getElementById('parkGrid');
       parkGrid.innerHTML = "";
       state.park.forEach((card, pIdx) => {
         parkGrid.appendChild(createSlotEl(card, { from: 'park', pIdx }));
       });
-      // 常に空きスロットを最低4つ用意
       const extraSlots = 4 - (state.park.length % 4);
       for(let i=0; i<extraSlots; i++) {
         parkGrid.appendChild(createSlotEl(null, { from: 'park', pIdx: state.park.length + i }));
@@ -449,12 +448,11 @@
           ${card.memo ? `<div class="card-memo">${escapeHtml(card.memo)}</div>` : ''}
         `;
 
-        // タップ/クリックで選択または編集
         let pressTimer;
         cardEl.addEventListener('touchstart', (e) => {
           pressTimer = setTimeout(() => {
             openEditModal(card, loc);
-          }, 350);
+          }, 320);
         }, { passive: true });
         cardEl.addEventListener('touchend', () => clearTimeout(pressTimer));
         cardEl.addEventListener('touchmove', () => clearTimeout(pressTimer));
@@ -464,9 +462,7 @@
           handleCardTap(card, loc);
         });
 
-        // PC用ダブルクリック編集
         cardEl.addEventListener('dblclick', () => openEditModal(card, loc));
-
         slot.appendChild(cardEl);
       }
 
@@ -488,7 +484,6 @@
         selectedCard = null;
         renderBoard();
       } else {
-        // カード同士の交換
         swapItems(selectedCard, loc);
         selectedCard = null;
         renderBoard();
@@ -531,7 +526,6 @@
     function addRow(cols) {
       const slots = Array(cols).fill(null);
       if (cols === 3) {
-        // 3列の最後の位置に挿入
         const last3Idx = state.rows.map(r => r.cols).lastIndexOf(3);
         state.rows.splice(last3Idx + 1, 0, { cols, slots });
       } else {
@@ -542,7 +536,6 @@
 
     function deleteRow(rIdx) {
       const row = state.rows[rIdx];
-      // 存在していたカードを一時退避へ移動
       row.slots.forEach(slot => {
         if (slot) state.park.push(slot);
       });
@@ -550,7 +543,6 @@
       renderBoard();
     }
 
-    // モーダル編集
     function openEditModal(card, loc) {
       editingCardRef = { card, loc };
       document.getElementById('editIcon').value = card.icon || "";
@@ -585,8 +577,13 @@
       renderBoard();
     }
 
-    // 保存＆GitHub公開
     async function saveAndPublish() {
+      const token = getGithubToken();
+      if (!token) {
+        alert("トークンが設定されていないため保存できません。");
+        return;
+      }
+
       const btn = document.getElementById('saveBtn');
       btn.disabled = true;
       btn.innerText = "GitHubへ反映中...";
@@ -594,26 +591,28 @@
       state.title = document.getElementById('pageTitle').value.trim() || "マイリンク";
 
       try {
-        // 1. 状態保存（JSON）
-        await pushGitHubFile(STATE_FILE, JSON.stringify(state, null, 2), "Update layout state");
-
-        // 2. 公開用静的HTML（hub.html）の生成＆保存
+        await pushGitHubFile(STATE_FILE, JSON.stringify(state, null, 2), "Update layout state", token);
         const staticHtml = buildStaticHubHtml(state);
-        await pushGitHubFile(HUB_FILE, staticHtml, "Publish hub.html via Zangi-Board");
+        await pushGitHubFile(HUB_FILE, staticHtml, "Publish hub.html via Zangi-Board", token);
 
         alert("✅ 反映完了！約15〜30秒後に hub.html が更新されます。");
       } catch (err) {
-        alert("❌ 反映に失敗しました: " + err.message);
+        if (err.message.includes("Bad credentials")) {
+          localStorage.removeItem("ZANGI_GH_TOKEN");
+          alert("❌ トークンが無効です。次回保存時に入力し直してください。");
+        } else {
+          alert("❌ 反映に失敗しました: " + err.message);
+        }
       } finally {
         btn.disabled = false;
         btn.innerText = "保存・公開へ反映";
       }
     }
 
-    async function pushGitHubFile(path, content, message) {
+    async function pushGitHubFile(path, content, message, token) {
       const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
       const headers = {
-        "Authorization": "token " + GITHUB_TOKEN,
+        "Authorization": "token " + token,
         "Accept": "application/vnd.github.v3+json",
         "Content-Type": "application/json"
       };
@@ -649,7 +648,6 @@
       }
     }
 
-    // 公開用の超軽量・完全静的HTML生成
     function buildStaticHubHtml(data) {
       let rowsHtml = "";
       data.rows.forEach(row => {
