@@ -1,0 +1,139 @@
+name: Build Static Hub
+
+on:
+  repository_dispatch:
+    types: [update-hub]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate static hub.html from json data
+        run: |
+          node -e '
+          const fs = require("fs");
+          const payload = process.env.PAYLOAD ? JSON.parse(process.env.PAYLOAD) : [];
+          
+          let cardsHtml = "";
+          payload.forEach(item => {
+            const imgSrc = (item.image && item.image.length > 20) ? item.image : "";
+            cardsHtml += `
+            <div class="card-wrap">
+              <a href="${item.url || "#"}" class="card">
+                ${imgSrc ? `<img src="${imgSrc}" alt="${item.title || ""}" loading="lazy">` : `<div style="width:100%;height:100%;background:#eee;"></div>`}
+                ${item.title ? `<span class="card-title-badge">${item.title}</span>` : ""}
+                ${item.badge ? `<span class="card-footer-badge">${item.badge}</span>` : ""}
+              </a>
+            </div>`;
+          });
+
+          const html = `<!DOCTYPE html>
+          <html lang="ja">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+            <meta name="robots" content="noindex, nofollow">
+            <title>nori'\''s link</title>
+            <meta property="og:title" content="nori'\''s link">
+            <meta property="og:description" content="マイリンク集">
+            <meta property="og:url" content="https://norisann5155.github.io/link/hub.html">
+            <meta property="og:type" content="website">
+            <meta property="og:image" content="https://norisann5155.github.io/link/pika.jpg">
+            <style>
+              * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+              body {
+                background: linear-gradient(180deg, #e3f2fd 0%, #fff9e6 15%, #f7f9fa 35%, #f7f9fa 100%);
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                display: flex;
+                justify-content: center;
+                min-height: 100vh;
+                padding: 16px 12px 60px;
+              }
+              .container { width: 100%; max-width: 420px; text-align: center; }
+              .page-title {
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: 0.05em;
+                color: #666;
+                margin-bottom: 14px;
+                text-transform: lowercase;
+              }
+              .link-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                width: 100%;
+              }
+              .card-wrap { position: relative; width: 100%; aspect-ratio: 1 / 1.15; }
+              .card {
+                width: 100%;
+                height: 100%;
+                background-color: #fff;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+                text-decoration: none;
+                display: flex;
+                position: relative;
+              }
+              .card:active { transform: scale(0.97); }
+              .card img { width: 100%; height: 100%; object-fit: cover; background-color: #eee; }
+              .card-title-badge {
+                position: absolute;
+                top: 6px;
+                left: 6px;
+                right: 6px;
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(2px);
+                padding: 4px 6px;
+                border-radius: 8px;
+                font-size: 11px;
+                font-weight: 700;
+                color: #111;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+              .card-footer-badge {
+                position: absolute;
+                bottom: 6px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(255, 255, 255, 0.9);
+                padding: 2px 8px;
+                border-radius: 10px;
+                font-size: 11px;
+                font-weight: 700;
+                color: #333;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="page-title">nori'\''s link</div>
+              <div class="link-grid">
+                ${cardsHtml}
+              </div>
+            </div>
+          </body>
+          </html>`;
+
+          fs.writeFileSync("hub.html", html);
+          '
+        env:
+          PAYLOAD: ${{ toJson(github.event.client_payload.items) }}
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add hub.html
+          git commit -m "Auto-generate hub.html via admin panel" || exit 0
+          git push
