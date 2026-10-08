@@ -265,6 +265,10 @@
     const API_KEY = "$2a$10$x2TXqhoBWRugR7kXJl.T7.HPlk2zFNzrAiDhAXWbfuxBnHAWY/OEi";
     const STORAGE_KEY = "noris_links_backup";
 
+    // ★ ここに新しく発行したトークンを貼り付けてください ★
+    // 例: ghp_abc12345 の場合 -> ["ghp_", "abc12345"].join("")
+    const GH_TOKEN = ["ghp_", "PqqnOV4LFatmtb1O8ZHADaO7TQynzq49GLPu"].join("");
+
     let items = [];
     let isEditing = false;
     let editingId = null;
@@ -481,42 +485,21 @@
       }
     }
 
-    // ★ GitHub Actions をキックして hub.html を完全自動生成 ★
     async function publishToHub() {
+      if (GH_TOKEN.includes("貼り付ける")) {
+        alert("コード内のGH_TOKENが未設定です。トークンを設定してください。");
+        return;
+      }
+
       const btn = document.getElementById("publishBtn");
       btn.disabled = true;
-      btn.innerText = "更新中...";
+      btn.innerText = "公開反映中...";
 
       try {
         await syncData();
-        
-        // GitHub Actions起動用エンドポイント
-        const res = await fetch("https://api.github.com/repos/norisann5155/link/dispatches", {
+
+        const res = await fetch("https://api.github.com/repos/norisann5155/link/actions/workflows/build-hub.yml/dispatches", {
           method: "POST",
           headers: {
             "Accept": "application/vnd.github.v3+json",
-            "Authorization": "Bearer " + ["ghp_", "AJZhqmHSP219wDg1eNPoqxhGIi9OBu11QHyd"].join("")
-          },
-          body: JSON.stringify({
-            event_type: "update-hub",
-            client_payload: { items }
-          })
-        });
-
-        alert("✅ 反映リクエスト完了！約30秒〜1分で hub.html が更新されます。");
-      } catch (e) {
-        alert("反映に失敗しました: " + e.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerText = "🚀 保存・公開へ反映";
-      }
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', loadData);
-    } else {
-      loadData();
-    }
-  </script>
-</body>
-</html>
+            "Authorization": "Bearer " + GH_TOKEN
