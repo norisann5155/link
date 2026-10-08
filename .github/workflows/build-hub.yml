@@ -12,17 +12,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Generate static hub.html from json data
+      - name: Fetch JSON and Build Static hub.html
         run: |
+          curl -s -H "X-Master-Key: \$2a\$10\$x2TXqhoBWRugR7kXJl.T7.HPlk2zFNzrAiDhAXWbfuxBnHAWY/OEi" https://api.jsonbin.io/v3/b/6aab42ecffd5d160531035fa/latest > data.json
           node -e '
           const fs = require("fs");
-          const payload = process.env.PAYLOAD ? JSON.parse(process.env.PAYLOAD) : [];
-          
+          const raw = JSON.parse(fs.readFileSync("data.json", "utf8"));
+          const items = raw.record || [];
+
           let cardsHtml = "";
-          payload.forEach(item => {
+          items.forEach(item => {
             const imgSrc = (item.image && item.image.length > 20) ? item.image : "";
             cardsHtml += `
             <div class="card-wrap">
@@ -126,14 +127,13 @@ jobs:
           </html>`;
 
           fs.writeFileSync("hub.html", html);
+          fs.unlinkSync("data.json");
           '
-        env:
-          PAYLOAD: ${{ toJson(github.event.client_payload.items) }}
 
       - name: Commit and push changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add hub.html
-          git commit -m "Auto-generate hub.html via admin panel" || exit 0
+          git commit -m "Auto-generate static hub.html" || exit 0
           git push
