@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>マイリンク</title>
+
+  <meta property="og:title" content="マイリンク">
+  <meta property="og:description" content="マイリンク集">
+  <meta property="og:url" content="https://norisann5155.github.io/link/hub.html">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://norisann5155.github.io/link/pika.jpg">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: #f7f9fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px 12px 60px;
+    }
+    .container {
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+    .page-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #333;
+      margin-bottom: 18px;
+    }
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+    .card {
+      position: relative;
+      width: 100%;
+      height: 105px;
+      border-radius: 16px;
+      border: 1px solid transparent;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 4px;
+      touch-action: manipulation;
+    }
+    .card:active {
+      transform: scale(0.96);
+      opacity: 0.9;
+    }
+    .card-icon {
+      font-size: 26px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1a1a1a;
+      line-height: 1.25;
+      text-align: center;
+      word-break: break-all;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-badge {
+      margin-top: 5px;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      white-space: nowrap;
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="page-title">マイリンク</div>
+    <div class="link-grid">
+      
+      <a href="#" class="card" style="background: #ffe8cc; border-color: #ffd8a8;">
+        <span class="card-icon">ネット、でんき</span>
+        <span class="card-title">やります！</span>
+        
+      </a>
+      <a href="#" class="card" style="background: #d0ebff; border-color: #a5d8ff;">
+        <span class="card-icon">🔗</span>
+        <span class="card-title">jcomひかり、auでんき</span>
+        
+      </a>
+      <a href="#" class="card" style="background: #d3f9d8; border-color: #b2f2bb;">
+        <span class="card-icon">🔗</span>
+        <span class="card-title">翌日キャンセルの電話をする　キャッシュバック入ってから</span>
+        
+      </a>
+      <a href="#" class="card" style="background: #fff3bf; border-color: #ffec99;">
+        <span class="card-icon">🔗</span>
+        <span class="card-title">申込件数</span>
+        
+      </a>
+      <a href="#" class="card" style="background: #d0ebff; border-color: #a5d8ff;">
+        <span class="card-icon">🔗</span>
+        <span class="card-title">aupay</span>
+        <span class="card-badge" style="background: #007aff; color: #fff;">45000</span>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
